@@ -20,7 +20,7 @@
 ##############################################################################
 
 from odoo import models, api, fields, exceptions, _
-
+from odoo.tools import float_round
 
 class OpFeesTermsLine(models.Model):
     _name = "op.fees.terms.line"
@@ -58,7 +58,7 @@ class OpFeesTerms(models.Model):
         for line in res.line_ids:
             if line.value:
                 total += line.value
-        if total != 100.0:
+        if float_round(total, 2) != 100.00:#EVUGOR: se redondea el total a 2 decimales
             raise exceptions.AccessError(
                 _("Fees terms must be divided as such sum up in 100%"))
         return res
