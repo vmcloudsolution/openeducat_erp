@@ -215,9 +215,14 @@ class OpAdmission(models.Model):
 
     def get_student_vals(self):
         for student in self:
+            email_user = student.email#EVUGOR: se verifica que no exista el mismo usuario
+            if self.env['res.users'].search([('login', '=', student.email)]):#EVUGOR
+                if not len(email_user.split('@')) == 2:
+                    raise ValidationError('El correo del alumno no es valido')
+                email_user = email_user.split('@')[0]+student.application_number+email_user.split('@')[1]
             student_user = self.env['res.users'].create({
                 'name': student.name,
-                'login': student.email,
+                'login': email_user,#EVUGOR
                 'image_1920': self.image or False,
                 'is_student': True,
                 'company_id': self.env.ref('base.main_company').id,
